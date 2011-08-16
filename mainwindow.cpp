@@ -9,7 +9,7 @@
 
 const QString SettingGeometry = "geometry";
 const QString SettingCloseInfo = "closeinfo";
-const QString Url = "http://0.app.mysms.gpa.sms.co.at"; //"https://app.mysms.com";
+const QString Url = "https://app.mysms.com";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     QWidget::setWindowIcon(m_icon);
-    //setWindowIcon(m_icon);
     setWindowTitle("mysms App");
 
     createActions();
@@ -39,9 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_webview.page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 
-    // disable in live builds
-    //m_webview.settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-    // enabled in live builds
     m_webview.setContextMenuPolicy(Qt::NoContextMenu);
 
     setCentralWidget(&m_webview);
@@ -91,21 +87,21 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     switch (reason) {
-    case QSystemTrayIcon::Trigger:
-        if (isHidden()) {
-            show();
-            raise();
-            setWindowState(m_savedWindowState | Qt::WindowActive);
-        } else {
-            m_savedWindowState = windowState();
-            hide();
-        }
-        break;
-    case QSystemTrayIcon::DoubleClick:
-    case QSystemTrayIcon::MiddleClick:
-        break;
-    default:
-        ;
+		case QSystemTrayIcon::Trigger:
+			if (isHidden()) {
+				show();
+				raise();
+				setWindowState(m_savedWindowState | Qt::WindowActive);
+			} else {
+				m_savedWindowState = windowState();
+				hide();
+			}
+			break;
+		case QSystemTrayIcon::DoubleClick:
+		case QSystemTrayIcon::MiddleClick:
+			break;
+		default:
+			break;
     }
 }
 

@@ -27,8 +27,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    +=
 
-ICON = mysms.icns
-
 OTHER_FILES +=
 
 RESOURCES += \
@@ -37,4 +35,4 @@ RESOURCES += \
 #Windows resource file
 win32:RC_FILE = mysms.rc
 
-#macx:ICON = mysms.icns
+macx:ICON = mysms.icns
