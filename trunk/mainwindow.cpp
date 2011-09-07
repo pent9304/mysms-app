@@ -49,8 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_webview.load(QUrl(Url));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     saveSettings();
 }
 
@@ -87,27 +86,31 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     switch (reason) {
-		case QSystemTrayIcon::Trigger:
-			if (isHidden()) {
-				show();
-				raise();
-				setWindowState(m_savedWindowState | Qt::WindowActive);
-			} else {
-				m_savedWindowState = windowState();
-				hide();
-			}
-			break;
-		case QSystemTrayIcon::DoubleClick:
-		case QSystemTrayIcon::MiddleClick:
-			break;
-		default:
-			break;
+        case QSystemTrayIcon::Trigger:
+            if (isHidden()) {
+                show();
+                raise();
+                setWindowState(m_savedWindowState | Qt::WindowActive);
+            } else {
+                m_savedWindowState = windowState();
+                hide();
+            }
+            break;
+        case QSystemTrayIcon::DoubleClick:
+        case QSystemTrayIcon::MiddleClick:
+            break;
+        default:
+            break;
     }
 }
 
 
 void MainWindow::openExternalUrl(QUrl url) {
-     QDesktopServices::openUrl(url);
+    if (url.toString().startsWith(Url)) {
+        m_webview.load(url);
+    } else {
+        QDesktopServices::openUrl(url);
+    }
 }
 
 void MainWindow::addJsObjects() {
