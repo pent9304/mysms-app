@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    MainWindow w;
-    app.setActivationWindow(&w);
-    w.show();
+    MainWindow *w = MainWindow::instance();
+    app.setActivationWindow(w);
+    w->show();
     return app.exec();
 }

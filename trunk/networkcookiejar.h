@@ -18,50 +18,22 @@
 ** if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 **
 ****************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 
-#include <QtGui>
-#include <QWebView>
+#ifndef NETWORKCOOKIEJAR_H
+#define NETWORKCOOKIEJAR_H
 
-class MainWindow : public QMainWindow
+#include <QNetworkCookieJar>
+#include <QSettings>
+
+class NetworkCookieJar : public QNetworkCookieJar
 {
-    Q_OBJECT
+private:
 
 public:
-    static MainWindow *instance();
-    ~MainWindow();
-    QNetworkAccessManager *networkAccessManager();
-    QSystemTrayIcon *systemTrayIcon();
+	NetworkCookieJar();
 
-protected:
-    void changeEvent(QEvent *event);
-    void closeEvent(QCloseEvent *event);
-
-protected slots:
-    void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void openExternalUrl(QUrl url);
-    void saveSettings();
-    void createActions();
-    void createTrayIcon();
-    void quit();
-
-private:
-    static MainWindow *m_instance;
-    explicit MainWindow(QWidget *parent = 0);
-
-    QSettings m_settings;
-    QWebView m_webview;
-    QIcon m_icon;
-
-    Qt::WindowStates m_savedWindowState;
-    QAction *m_quitAction;
-    QSystemTrayIcon *m_trayIcon;
-    QMenu *m_trayIconMenu;
-
-private slots:
-    void addJsObjects();
-
+    bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl & url);
+    QList<QNetworkCookie> cookiesForUrl (const QUrl & url) const;
 };
 
-#endif // MAINWINDOW_H
+#endif // NETWORKCOOKIEJAR_H
