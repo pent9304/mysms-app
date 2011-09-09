@@ -18,50 +18,31 @@
 ** if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 **
 ****************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+
+#ifndef KDENOTIFICATION_H_
+#define KDENOTIFICATION_H_
 
 #include <QtGui>
-#include <QWebView>
+#include <QNetworkReply>
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class KdeNotification : public QObject
+ {
+     Q_OBJECT
+ public:
+     KdeNotification(const QString &imageUrl, const QString &title, const QString &body, QObject *parent=0);
+     ~KdeNotification();
 
-public:
-    static MainWindow *instance();
-    ~MainWindow();
-    QNetworkAccessManager *networkAccessManager();
-    QSystemTrayIcon *systemTrayIcon();
+ public slots:
+     void downloadFinished();
+     void show();
 
-protected:
-    void changeEvent(QEvent *event);
-    void closeEvent(QCloseEvent *event);
+ private:
+     QString m_imageUrl;
+     QString m_title;
+     QString m_body;
 
-protected slots:
-    void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void openExternalUrl(QUrl url);
-    void saveSettings();
-    void createActions();
-    void createTrayIcon();
-    void quit();
+     QNetworkReply *m_networkReply;
+     QImage m_image;
+ };
 
-private:
-    static MainWindow *m_instance;
-    explicit MainWindow(QWidget *parent = 0);
-
-    QSettings m_settings;
-    QWebView m_webview;
-    QIcon m_icon;
-
-    Qt::WindowStates m_savedWindowState;
-    QAction *m_quitAction;
-    QSystemTrayIcon *m_trayIcon;
-    QMenu *m_trayIconMenu;
-
-private slots:
-    void addJsObjects();
-
-};
-
-#endif // MAINWINDOW_H
+#endif /* KDENOTIFICATION_H_ */

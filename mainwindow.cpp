@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include "networkcookiejar.h"
+#include "jsinterface.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -9,7 +11,15 @@
 
 const QString SettingGeometry = "geometry";
 const QString SettingCloseInfo = "closeinfo";
+const QString SettingLocale = "locale";
 const QString Url = "https://app.mysms.com";
+
+MainWindow *MainWindow::m_instance = 0;
+
+MainWindow *MainWindow::instance() {
+  if (m_instance == 0) m_instance = new MainWindow();
+  return m_instance;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -17,13 +27,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_icon = QIcon(":/resource/icon.png");
 
-
     QWidget::setWindowIcon(m_icon);
     setWindowTitle("mysms App");
 
     createActions();
     createTrayIcon();
-    m_jsInterface = new JsInterface(m_trayIcon);
 
     if (m_settings.contains(SettingGeometry)) {
         setGeometry(m_settings.value(SettingGeometry).toRect());
@@ -36,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_webview.settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
     QWebSettings::enablePersistentStorage();
 
+    m_webview.page()->networkAccessManager()->setCookieJar(new NetworkCookieJar());
     m_webview.page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 
     m_webview.setContextMenuPolicy(Qt::NoContextMenu);
@@ -46,11 +55,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_webview.page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addJsObjects()));
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-    m_webview.load(QUrl(Url));
+    if (m_settings.contains(SettingLocale)) {
+    	m_webview.load(QUrl(Url + "/?locale=" + m_settings.value(SettingLocale).toString()));
+    } else {
+    	m_webview.load(QUrl(Url));
+    }
 }
 
-MainWindow::~MainWindow() {
-    saveSettings();
+MainWindow::~MainWindow() {}
+
+QNetworkAccessManager *MainWindow::networkAccessManager() {
+	return m_webview.page()->networkAccessManager();
+}
+
+QSystemTrayIcon *MainWindow::systemTrayIcon() {
+	return m_trayIcon;
 }
 
 void MainWindow::changeEvent(QEvent *event) {
@@ -106,24 +125,30 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 
 
 void MainWindow::openExternalUrl(QUrl url) {
-    if (url.toString().startsWith(Url)) {
-        m_webview.load(url);
-    } else {
-        QDesktopServices::openUrl(url);
-    }
+	if (url.toString().startsWith(Url)) {
+		QRegExp rx("locale\\=(\\w\\w)");
+		if (rx.indexIn(url.toString(), 0) > 0) {
+			QString locale = rx.capturedTexts().value(1);
+			m_settings.setValue(SettingLocale, locale);
+		}
+		m_webview.load(url);
+	} else {
+		QDesktopServices::openUrl(url);
+	}
 }
 
 void MainWindow::addJsObjects() {
-     m_webview.page()->mainFrame()->addToJavaScriptWindowObject(QString("mysms"), m_jsInterface);
+     m_webview.page()->mainFrame()->addToJavaScriptWindowObject(QString("mysms"), new JsInterface());
  }
 
 void MainWindow::saveSettings() {
      m_settings.setValue(SettingGeometry, geometry());
+     m_settings.sync();
 }
 
 void MainWindow::createActions() {
      m_quitAction = new QAction(tr("&Quit"), this);
-     connect(m_quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+     connect(m_quitAction, SIGNAL(triggered()), this, SLOT(quit()));
 }
 
 void MainWindow::createTrayIcon() {
@@ -134,4 +159,9 @@ void MainWindow::createTrayIcon() {
      m_trayIcon->setContextMenu(m_trayIconMenu);
      m_trayIcon->setIcon(m_icon);
      m_trayIcon->show();
+}
+
+void MainWindow::quit() {
+	saveSettings();
+	qApp->quit();
 }

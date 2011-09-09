@@ -20,14 +20,26 @@
 ****************************************************************************/
 
 #include "jsinterface.h"
+#include "mainwindow.h"
 
-JsInterface::JsInterface(QSystemTrayIcon *trayIcon, QObject *parent)
-    : QObject(parent), m_trayIcon(trayIcon)
+#if defined (USE_KDE)
+	#include "kdenotification.h"
+#endif
+
+JsInterface::JsInterface(QObject *parent)
+    : QObject(parent)
 {
 }
 
 void JsInterface::showNotification(const QString &imageUrl, const QString &title, const QString &body) {
-    m_trayIcon->showMessage(title, body, QSystemTrayIcon::NoIcon, 15000);
+
+#if defined (USE_KDE)
+	qDebug() << "show kde notification";
+	KdeNotification *notification = new KdeNotification(imageUrl, title, body);
+#else
+	MainWindow::instance()->systemTrayIcon()->showMessage(title, body, QSystemTrayIcon::NoIcon, 15000);
+#endif
+
 }
 
 void JsInterface::setBadgeCounter(const int badgeCounter) {
@@ -39,7 +51,7 @@ void JsInterface::setBadgeCounter(const int badgeCounter) {
     } else {
         icon = new QIcon(QString(":/resource/icon-%1.png").arg(badgeCounter));
     }
-    m_trayIcon->setIcon(*icon);
+    MainWindow::instance()->systemTrayIcon()->setIcon(*icon);
     delete icon;
 }
 

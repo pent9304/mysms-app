@@ -24,21 +24,16 @@
 
 #include <QtGui>
 
-QT_FORWARD_DECLARE_CLASS(QSystemTrayIcon)
-
 class JsInterface : public QObject
  {
      Q_OBJECT
  public:
-     JsInterface(QSystemTrayIcon *trayIcon, QObject *parent=0);
+     JsInterface(QObject *parent=0);
 
  public slots:
      void showNotification(const QString &imageUrl, const QString &title, const QString &body);
      void setBadgeCounter(const int badgeCounter);
      void openExternalUrl(const QString &url);
-
- private:
-    QSystemTrayIcon *m_trayIcon;
 
  };
 #endif // JSINTERFACE_H
