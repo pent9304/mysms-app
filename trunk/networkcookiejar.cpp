@@ -21,7 +21,6 @@
 
 #include "networkcookiejar.h"
 
-#include <QDebug>
 #include <QDateTime>
 #include <QStringList>
 
@@ -33,10 +32,8 @@ bool NetworkCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> & cookieLis
     m_settings.beginGroup("Cookies/" + url.host());
     for (QList<QNetworkCookie>::const_iterator i = cookieList.begin(); i != cookieList.end(); i++) {
         if ((*i).isSessionCookie() || (*i).expirationDate() < QDateTime::currentDateTime()) {
-            qDebug() << "remove cookie: " << (*i).name();
             m_settings.remove((*i).name());
         } else {
-            qDebug() << "set cookie: " << (*i).name() << ", " << QString((*i).toRawForm());
             m_settings.setValue((*i).name(), QString((*i).toRawForm()));
         }
     }
