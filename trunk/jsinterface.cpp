@@ -56,5 +56,5 @@ void JsInterface::setBadgeCounter(const int badgeCounter) {
 }
 
 void JsInterface::openExternalUrl(const QString &url) {
-    QDesktopServices::openUrl(QUrl(url));
+    QDesktopServices::openUrl(QUrl::fromEncoded(url.toLocal8Bit()));
 }
