@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_webview.settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     m_webview.settings()->setAttribute(QWebSettings::SiteSpecificQuirksEnabled, false);
     m_webview.settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
+    m_webview.settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebSettings::enablePersistentStorage();
 
     m_webview.page()->networkAccessManager()->setCookieJar(new NetworkCookieJar());
