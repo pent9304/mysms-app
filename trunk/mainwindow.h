@@ -23,6 +23,7 @@
 
 #include <QtGui>
 #include <QWebView>
+#include <QWebPage>
 
 class MainWindow : public QMainWindow
 {
@@ -62,6 +63,12 @@ private:
 private slots:
     void addJsObjects();
 
+};
+
+class WebPage : public QWebPage {
+    Q_OBJECT
+protected slots:
+    QString userAgentForUrl(const QUrl& url) const;
 };
 
 #endif // MAINWINDOW_H

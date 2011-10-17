@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     QtSingleApplication::setGraphicsSystem("raster");
     QtSingleApplication::setOrganizationName("sms.at");
     QtSingleApplication::setApplicationName("mysms");
-    QtSingleApplication::setApplicationVersion("1.0.1");
+    QtSingleApplication::setApplicationVersion("1.0.2");
     QtSingleApplication app(argc, argv);
 
     if (app.isRunning()) {
