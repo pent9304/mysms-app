@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "networkcookiejar.h"
 #include "jsinterface.h"
+#include "qtsingleapplication.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -12,7 +13,7 @@
 const QString SettingGeometry = "geometry";
 const QString SettingCloseInfo = "closeinfo";
 const QString SettingLocale = "locale";
-const QString Url = "https://app.mysms.com";
+const QString Url = "http://0.app.mysms.gpa.sms.co.at/?locale=de"; //"https://app.mysms.com";
 
 MainWindow *MainWindow::m_instance = 0;
 
@@ -170,7 +171,7 @@ void MainWindow::quit() {
 QString WebPage::userAgentForUrl(const QUrl &url ) const {
     QString ua = QWebPage::userAgentForUrl(url);
     if (url.toString().indexOf("analytics") >= 0) {
-        return ua.replace(QRegExp("\s*Safari/[0-9\.]+"), "" );
+        return ua.replace(QRegExp("^\\S*\\s(\\([^\\)]*\\)).*$"), "mysms/" + QtSingleApplication::applicationVersion() + " \\1" );
     } else {
         return ua;
     }
