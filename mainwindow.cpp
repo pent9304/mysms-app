@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_webview.settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebSettings::enablePersistentStorage();
 
+    m_webview.setPage(new WebPage());
     m_webview.page()->networkAccessManager()->setCookieJar(new NetworkCookieJar());
     m_webview.page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 
@@ -74,7 +75,6 @@ QSystemTrayIcon *MainWindow::systemTrayIcon() {
 }
 
 void MainWindow::changeEvent(QEvent *event) {
-    //
     if (event->type() == QEvent::WindowStateChange) {
         QWindowStateChangeEvent *qwsc_event = dynamic_cast<QWindowStateChangeEvent*>(event);
         m_savedWindowState = qwsc_event->oldState();
@@ -165,4 +165,13 @@ void MainWindow::createTrayIcon() {
 void MainWindow::quit() {
 	saveSettings();
 	qApp->quit();
+}
+
+QString WebPage::userAgentForUrl(const QUrl &url ) const {
+    QString ua = QWebPage::userAgentForUrl(url);
+    if (url.toString().indexOf("analytics") >= 0) {
+        return ua.replace(QRegExp("\s*Safari/[0-9\.]+"), "" );
+    } else {
+        return ua;
+    }
 }
