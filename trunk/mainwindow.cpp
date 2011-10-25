@@ -13,7 +13,7 @@
 const QString SettingGeometry = "geometry";
 const QString SettingCloseInfo = "closeinfo";
 const QString SettingLocale = "locale";
-const QString Url = "http://0.app.mysms.gpa.sms.co.at/?locale=de"; //"https://app.mysms.com";
+const QString Url = "https://app.mysms.com";
 
 MainWindow *MainWindow::m_instance = 0;
 
